@@ -38,6 +38,7 @@ async function run() {
 
     const database = client.db("lostItemsDB");
     const itemsCollection = database.collection("items");
+    const recoveredItemsCollection = client.db("lostItemsDB").collection("recoveredItems");
     //
     // Endpoint to create a new item data in the database
     app.post("/all-items", async (req, res) => {
@@ -54,7 +55,7 @@ async function run() {
       res.send(result);
     });
 
-    // Endpoint to create api for a single item by ID
+    // added endpoint to create api for a single item by ID
     app.get("/all-items/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
