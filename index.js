@@ -4,12 +4,9 @@ const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 3000;
-const bodyParser = require("body-parser");
 
 app.use(cors());
 app.use(express.json());
-app.use(bodyParser.json({ limit: "10mb" }));
-app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 
 app.get("/", (req, res) => {
   res.send("Track n trace is on the right track and has trace :)");
@@ -64,6 +61,15 @@ async function run() {
       const result = await itemsCollection.findOne(query);
       res.send(result);
     });
+    // added endpoint to create api for a single item by User Email
+    app.get("/all-items/email/:userEmail", async (req, res) => {
+      const { userEmail } = req.params;
+      const query = { email: userEmail };
+      // console.log(userEmail, query)
+      const result = await itemsCollection.find(query).toArray();
+      res.send(result);
+    });
+
     //
     app.post("/recover-item/:id", async (req, res) => {
       const { id } = req.params;
