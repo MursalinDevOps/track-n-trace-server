@@ -91,7 +91,10 @@ async function run() {
       });
     });
 
-   
+    app.get("/recovered-items", async (req, res) => {
+      const result = await recoveredItemsCollection.find().toArray();
+      res.send(result);
+    });
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
