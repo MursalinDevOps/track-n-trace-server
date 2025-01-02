@@ -70,7 +70,7 @@ async function run() {
       res.send(result);
     });
 
-    // added PUT /all-items/:id API to update a campaign by ID
+    // PUT /all-items/:id API to update a campaign by ID
     app.put("/all-items/:id", async (req, res) => {
       const { id } = req.params;
       const updatedPost = req.body;
@@ -79,6 +79,14 @@ async function run() {
         $set: updatedPost,
       };
       const result = await itemsCollection.updateOne(query, updatedItem);
+      res.send(result);
+    });
+
+     // DELETE a post 
+     app.delete("/all-items/:id", async (req, res) => {
+      const { id } = req.params;
+      const query = { _id: new ObjectId(id) };
+      const result = await itemsCollection.deleteOne(query);
       res.send(result);
     });
 
