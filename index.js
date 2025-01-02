@@ -38,7 +38,9 @@ async function run() {
 
     const database = client.db("lostItemsDB");
     const itemsCollection = database.collection("items");
-    const recoveredItemsCollection = client.db("lostItemsDB").collection("recoveredItems");
+    const recoveredItemsCollection = client
+      .db("lostItemsDB")
+      .collection("recoveredItems");
     //
     // Endpoint to create a new item data in the database
     app.post("/all-items", async (req, res) => {
@@ -62,6 +64,34 @@ async function run() {
       const result = await itemsCollection.findOne(query);
       res.send(result);
     });
+    //
+    app.post("/recover-item/:id", async (req, res) => {
+      const { id } = req.params;
+      const recoveryDetails = req.body;
+      const item = await itemsCollection.findOne({ _id: new ObjectId(id) });
+
+      if (item?.status === "recovered") {
+        return res.status(400).send({ error: "Item is already recovered." });
+      }
+
+      const recoveryResult = await recoveredItemsCollection.insertOne({
+        ...recoveryDetails,
+        itemId: id,
+      });
+
+      const updateResult = await itemsCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: { status: "recovered" } }
+      );
+
+      res.send({
+        message: "Item marked as recovered.",
+        recoveryResult,
+        updateResult,
+      });
+    });
+
+   
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
