@@ -70,6 +70,18 @@ async function run() {
       res.send(result);
     });
 
+    // added PUT /all-items/:id API to update a campaign by ID
+    app.put("/all-items/:id", async (req, res) => {
+      const { id } = req.params;
+      const updatedPost = req.body;
+      const query = { _id: new ObjectId(id) };
+      const updatedItem = {
+        $set: updatedPost,
+      };
+      const result = await itemsCollection.updateOne(query, updatedItem);
+      res.send(result);
+    });
+
     //
     app.post("/recover-item/:id", async (req, res) => {
       const { id } = req.params;
